@@ -208,4 +208,9 @@ dist
 .history
 .ionide
 
+### Dotenv ###
+# Local .env files
+**/.env*
+.env
+
 # End of https://www.toptal.com/developers/gitignore/api/node,git,macos,visualstudiocode

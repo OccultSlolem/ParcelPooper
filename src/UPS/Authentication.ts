@@ -20,11 +20,35 @@ function isCreateTokenRequestResponse(
     typeof obj.issuedAt === "string" &&
     typeof obj.clientId === "string" &&
     typeof obj.accessToken === "string" &&
-    typeof obj.expiresIn === "number" &&
+    typeof obj.expiresIn === "string" &&
     typeof obj.status === "string" &&
     (typeof obj.scope === "string" || obj.scope === undefined) &&
-    (typeof obj.refreshCount === "number" || obj.refreshCount === undefined)
+    (typeof obj.refreshCount === "string" || obj.refreshCount === undefined)
   );
+}
+
+/**
+ * The UPS API returns all keys in snake_case, but we want camelCase. This
+ * function converts all keys in an object to camelCase.
+ * @param obj The object to convert
+ * @returns The object with all keys converted to camelCase
+ */
+function toCamelCase(obj: any): any {
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(toCamelCase);
+  }
+
+  return Object.keys(obj).reduce((result: any, key: string) => {
+    const camelCaseKey = key.replace(/([-_][a-z])/g, (group) =>
+      group.toUpperCase().replace('-', '').replace('_', '')
+    );
+    result[camelCaseKey] = toCamelCase(obj[key]);
+    return result;
+  }, {});
 }
 
 /**
@@ -44,7 +68,7 @@ export async function createBearerToken(
   clientSecret: string,
   isCIE?: boolean
 ): Promise<CreateTokenRequestResponse | UPSError> {
-  const encodedCredentials = btoa(`Basic ${clientId}:${clientSecret}`);
+  const encodedCredentials = btoa(`${clientId}:${clientSecret}`);
   const body = new URLSearchParams({
     grant_type: "client_credentials",
   });
@@ -53,7 +77,7 @@ export async function createBearerToken(
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
       "x-merchant-id": accountNumber,
-      Authorization: encodedCredentials,
+      Authorization: `Basic ${encodedCredentials}`,
     },
     body,
   };
@@ -68,6 +92,7 @@ export async function createBearerToken(
   if (!response.ok) {
     // Check if the response is a UPS error
     const error = await response.json();
+    console.error(error.response.errors[0]);
     if (isUPSError(error)) {
       return error;
     }
@@ -76,7 +101,7 @@ export async function createBearerToken(
     );
   }
 
-  const data = await response.json();
+  const data = toCamelCase(await response.json());
   if (!isCreateTokenRequestResponse(data)) {
     throw new Error(
       `Failed to create bearer token: Invalid response from server`
