@@ -1,4 +1,4 @@
-import { UPSError, isUPSError } from "./UPSTypes";
+import { UPSError, UPS_CIE_URL, UPS_PROD_URL, isUPSError } from "./UPSTypes";
 
 interface CreateTokenRequestResponse {
   tokenType: string;
@@ -52,17 +52,17 @@ function toCamelCase(obj: any): any {
 }
 
 /**
- * Creates a bearer token for the UPS API. Must have the authorization product
+ * Creates an OAuth 2.0 Authorization token for the UPS API. Must have the authorization product
  * enabled on your UPS app (which is required for all apps).
  * 
  * @param accountNumber Your UPS account number (the one you use for shipping)
  * @param clientId Your UPS app's client ID
  * @param clientSecret Your UPS app's client secret
  * @param isCIE If true, uses the UPS CIE environment instead of production
- * @returns A promise that resolves to the bearer token, or an error
+ * @returns A promise that resolves to the authentication token, or an error
  * @throws An error if the request fails or the response is invalid
  */
-export async function createBearerToken(
+export async function generateAuthToken(
   accountNumber: string,
   clientId: string,
   clientSecret: string,
@@ -82,10 +82,10 @@ export async function createBearerToken(
     body,
   };
 
+  const url = (isCIE ? UPS_CIE_URL : UPS_PROD_URL) + '/security/v1/oauth/token';
+
   const response = await fetch(
-    isCIE
-      ? "https://wwwcie.ups.com/security/v1/oauth/token"
-      : "https://onlinetools.ups.com/security/v1/oauth/token",
+    url,
     requestOptions
   );
 
@@ -97,14 +97,14 @@ export async function createBearerToken(
       return error;
     }
     throw new Error(
-      `Failed to create bearer token: ${response.status} ${response.statusText}`
+      `Failed to create authentication token: ${response.status} ${response.statusText}`
     );
   }
 
   const data = toCamelCase(await response.json());
   if (!isCreateTokenRequestResponse(data)) {
     throw new Error(
-      `Failed to create bearer token: Invalid response from server`
+      `Failed to create authentication token: Invalid response from server`
     );
   }
 
