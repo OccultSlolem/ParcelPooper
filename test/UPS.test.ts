@@ -41,7 +41,7 @@ describe('Tracking API', () => {
     await new Promise(resolve => setTimeout(resolve, delayTime));
   });
 
-  const trackingNumber  = '1Z1442YY7229014688'; // Corresponds to a delivered UPS Ground package. Only exists in CIE.
+  const trackingNumber  = '1Z12345E0305271640'; // Corresponds to a delivered UPS Ground package. Only exists in CIE.
   it('should get tracking status', async () => {
     const response = await getTrackingStatus(
       trackingNumber,
@@ -56,7 +56,10 @@ describe('Tracking API', () => {
     );
     console.log(response);
     expect(response).toHaveProperty('trackResponse');
-  });
+    expect(response).toHaveProperty('lastStatus');
+    // @ts-ignore (we already checked for the existence of lastStatus)
+    expect(response.lastStatus.delivered).toBe(true);
+  }, 10000);
   // This one has to go to the production endpoint as the CIE endpoint will ALWAYS return a 200
   // with tracking number 1Z1442YY7229014688 regardless of what is sent in the request.
   it('should throw an error if the tracking number is invalid', async () => {

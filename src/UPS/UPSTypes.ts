@@ -27,6 +27,20 @@ export function isUPSError(obj: any): obj is UPSError {
 
 // --- UPS Tracking API ---
 
+export interface UPSTrackingStatusMessage {
+  description: string;
+  delivered?: boolean;
+  delayed?: boolean;
+  inTransit?: boolean;
+  exception?: boolean;
+  outForDelivery?: boolean;
+  returnToSender?: boolean;
+  shipperActionRequired?: boolean;
+  recipientShouldPickUp?: boolean;
+  recipientShouldCheckUPS?: boolean;
+  recipientActionRequired?: boolean;
+}
+
 export interface UPSTrackingResponse {
   trackResponse: {
     shipment: UPSTrackingShipment[];
