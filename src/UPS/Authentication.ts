@@ -11,7 +11,7 @@ interface CreateTokenRequestResponse {
   refreshCount?: number;
 }
 
-function isCreateTokenRequestResponse(
+export function isCreateTokenRequestResponse(
   obj: any
 ): obj is CreateTokenRequestResponse {
   return (
