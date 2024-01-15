@@ -1,0 +1,53 @@
+name: Run Tests and deploy Node.Js Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Setup environment variables
+        env:
+          DOTENV_VARS: ${{ secrets.TESTING_DOTENV_VARS }}
+        run: |
+          echo "$DOTENV_VARS" >> .env; echo "$DOTENV_VARS" >> test/.env
+      
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build and Run Tests
+        run: npm test
+
+  publish-gpr:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://npm.pkg.github.com/
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
