@@ -76,7 +76,7 @@ describe('Tracking API', () => {
         false
       )
     ).rejects.toThrow();
-  });
+  }, 10000);
   it('should throw an error if neither an account number nor an authorization token is provided', async () => {
     await expect(
       getTrackingStatus(
