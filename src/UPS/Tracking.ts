@@ -306,7 +306,7 @@ interface UPSTrackingStatus extends UPSTrackingResponse {
  * @param isCIE Whether or not to use the CIE URL. Defaults to false if not provided.
  * @returns The tracking status of the package, or an error if one occurred
  */
-export async function getTrackingStatus(
+export async function getUPSTrackingStatus(
   trackingNumber: string,
   clientID: string,
   clientSecret: string,

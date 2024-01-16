@@ -1,6 +1,6 @@
 import { generateAuthToken } from '../src/UPS/Authentication';
 import dotenv from 'dotenv';
-import { getTrackingStatus } from '../src/UPS/Tracking';
+import { getUPSTrackingStatus } from '../src/UPS/Tracking';
 
 dotenv.config();
 
@@ -43,7 +43,7 @@ describe('Tracking API', () => {
 
   const trackingNumber  = '1Z12345E0305271640'; // Corresponds to a delivered UPS Ground package. Only exists in CIE.
   it('should get tracking status', async () => {
-    const response = await getTrackingStatus(
+    const response = await getUPSTrackingStatus(
       trackingNumber,
       clientId,
       clientSecret,
@@ -64,7 +64,7 @@ describe('Tracking API', () => {
   // with tracking number 1Z1442YY7229014688 regardless of what is sent in the request.
   it('should throw an error if the tracking number is invalid', async () => {
     await expect(
-      getTrackingStatus(
+      getUPSTrackingStatus(
         'invalid',
         clientId,
         clientSecret,
@@ -79,7 +79,7 @@ describe('Tracking API', () => {
   }, 10000);
   it('should throw an error if neither an account number nor an authorization token is provided', async () => {
     await expect(
-      getTrackingStatus(
+      getUPSTrackingStatus(
         trackingNumber,
         clientId,
         clientSecret,
