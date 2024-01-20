@@ -1,4 +1,4 @@
-import { UPSError, UPS_CIE_URL, UPS_PROD_URL, isUPSError } from "./UPSTypes";
+import { UPS_CIE_URL, UPS_PROD_URL, isUPSError } from "./UPSTypes";
 
 interface CreateTokenRequestResponse {
   tokenType: string;
@@ -67,7 +67,7 @@ export async function generateAuthToken(
   clientId: string,
   clientSecret: string,
   isCIE?: boolean
-): Promise<CreateTokenRequestResponse | UPSError> {
+): Promise<CreateTokenRequestResponse> {
   const encodedCredentials = btoa(`${clientId}:${clientSecret}`);
   const body = new URLSearchParams({
     grant_type: "client_credentials",
@@ -92,9 +92,8 @@ export async function generateAuthToken(
   if (!response.ok) {
     // Check if the response is a UPS error
     const error = await response.json();
-    console.error(error.response.errors[0]);
     if (isUPSError(error)) {
-      return error;
+      throw new Error(`Received authentication error(s) from UPS: ${error.errors.map((e) => e.message).join(', ')}`);
     }
     throw new Error(
       `Failed to create authentication token: ${response.status} ${response.statusText}`

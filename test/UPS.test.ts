@@ -47,10 +47,10 @@ describe('Tracking API', () => {
       trackingNumber,
       clientId,
       clientSecret,
+      accountNumber,
       'en_US',
       true,
       true,
-      accountNumber,
       undefined,
       true
     );
@@ -68,10 +68,10 @@ describe('Tracking API', () => {
         'invalid',
         clientId,
         clientSecret,
+        accountNumber,
         'en_US',
         true,
         true,
-        accountNumber,
         undefined,
         false
       )
@@ -83,10 +83,10 @@ describe('Tracking API', () => {
         trackingNumber,
         clientId,
         clientSecret,
+        undefined,
         'en_US',
         true,
         true,
-        undefined,
         undefined,
         true
       )

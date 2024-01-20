@@ -213,4 +213,6 @@ dist
 **/.env*
 .env
 
+lib
+
 # End of https://www.toptal.com/developers/gitignore/api/node,git,macos,visualstudiocode

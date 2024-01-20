@@ -1,5 +1,7 @@
 // --- General UPS Types ---
 
+import { TrackingStatus } from "../GlobalTypes";
+
 export const UPS_PROD_URL = 'https://onlinetools.ups.com';
 export const UPS_CIE_URL = 'https://wwwcie.ups.com';
 
@@ -29,6 +31,7 @@ export function isUPSError(obj: any): obj is UPSError {
 
 export interface UPSTrackingStatusMessage {
   description: string;
+  shorthandStatus: TrackingStatus;
   delivered?: boolean;
   delayed?: boolean;
   inTransit?: boolean;

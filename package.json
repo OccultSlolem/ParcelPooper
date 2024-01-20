@@ -1,11 +1,10 @@
 {
   "name": "@occultslolem/parcelpooper",
-  "version": "0.0.2",
-  "description": "Simple JS Library for Parcel Tracking",
-  "main": "index.js",
+  "version": "0.0.13",
+  "description": "Simple TS Library for Parcel Tracking",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && jest"
+    "test": "tsc; NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "keywords": [],
   "author": "",
@@ -15,12 +14,7 @@
   "dependencies": {
     "typescript": "^5.3.3"
   },
-  "files": ["dist/src"],
-  "exports": {
-    "./UPS/Tracking": "./UPS/Tracking.js",
-    "./UPS/Authentication": "./UPS/Authentication.js",
-    "./UPS/UPSTypes": "./UPS/UPSTypes.js"
-  },
+  "files": ["lib"],
   "devDependencies": {
     "@babel/core": "^7.23.7",
     "@babel/preset-env": "^7.23.8",
